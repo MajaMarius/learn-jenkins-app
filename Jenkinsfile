@@ -2,7 +2,8 @@ pipeline {
   agent any
 
   stages {
-    stage('Build') {
+
+    stage('Install') {
       agent {
         docker {
           image 'node:18-alpine'
@@ -16,7 +17,21 @@ pipeline {
           node --version
           npm --version
 
-          npm install
+          npm ci --no-audit --no-fund
+        '''
+      }
+    }
+
+    stage('Build') {
+      agent {
+        docker {
+          image 'node:18-alpine'
+          reuseNode true
+        }
+      }
+      steps {
+        sh '''
+          set -eux
           npm run build
         '''
       }
